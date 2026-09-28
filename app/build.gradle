@@ -1,0 +1,54 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'es.descargosat.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'es.descargosat.app'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    // Firma propia: todas las compilaciones salen con la misma clave, así las
+    // actualizaciones se instalan encima sin perder los datos del teléfono.
+    // Guarda firma/descargosat.jks y sus contraseñas: sin ellas no podréis
+    // publicar actualizaciones de esta app.
+    signingConfigs {
+        release {
+            storeFile file('../firma/descargosat.jks')
+            storePassword System.getenv('DESCARGOS_STORE_PASSWORD') ?: 'PKRjFnravUhgTTUCZbzy'
+            keyAlias 'descargosat'
+            keyPassword System.getenv('DESCARGOS_KEY_PASSWORD') ?: 'PKRjFnravUhgTTUCZbzy'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "DescargosAT-${variant.versionName}-${variant.buildType.name}.apk"
+        }
+    }
+}

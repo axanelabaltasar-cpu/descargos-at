@@ -1,0 +1,71 @@
+DESCARGOS AT · Proyecto Android (APK)
+=====================================
+
+Este proyecto genera el APK de la app de trazabilidad de descargos.
+La app va completa dentro del APK: no hace falta alojarla en ninguna web
+y funciona sin cobertura.
+
+Qué añade el APK respecto a la versión web
+------------------------------------------
+- Se instala como cualquier app y no depende de ninguna dirección web.
+- «Compartir expediente» abre directamente WhatsApp, correo, etc.
+- Los expedientes recibidos se pueden abrir con «Descargos AT» desde
+  WhatsApp o el gestor de archivos (se importan solos).
+- Fotos con la cámara o desde la galería, GPS y firma en pantalla.
+- «Informe → Imprimir / PDF» usa la impresión de Android (Guardar como PDF).
+
+
+OPCIÓN A · Compilar en GitHub (sin instalar nada)       ~10 minutos
+-------------------------------------------------------------------
+1. Crea una cuenta gratuita en https://github.com (si no la tienes).
+2. Crea un repositorio PRIVADO nuevo (botón «New»), p. ej. "descargos-at".
+3. En el repositorio: «Add file» → «Upload files». Arrastra TODO el
+   contenido de esta carpeta (incluida la carpeta .github; si el navegador
+   no la muestra, activa ver archivos ocultos o súbela por separado).
+   Pulsa «Commit changes».
+4. Abre la pestaña «Actions». La compilación «Compilar APK» se lanza sola
+   (si no, entra en ella y pulsa «Run workflow»).
+5. Cuando termine (marca verde, 3–6 minutos), entra en la ejecución y
+   descarga «DescargosAT-apk» en el apartado «Artifacts». Dentro está
+   DescargosAT-1.0.0-release.apk.
+
+
+OPCIÓN B · Compilar en el ordenador con Android Studio
+------------------------------------------------------
+1. Instala Android Studio (gratuito): https://developer.android.com/studio
+2. «Open» → selecciona esta carpeta (DescargosAT). Espera a que termine
+   de sincronizar (la primera vez descarga componentes).
+3. Menú «Build» → «Build App Bundle(s) / APK(s)» → «Build APK(s)».
+4. El APK queda en app/build/outputs/apk/release/ (o debug/).
+
+
+Instalar en los teléfonos
+-------------------------
+1. Envía el APK al teléfono (correo, WhatsApp, cable, carpeta compartida).
+2. Ábrelo. Android pedirá permitir «instalar apps de origen desconocido»
+   para esa aplicación (Archivos, WhatsApp...). Acéptalo e instala.
+3. Al abrir la app, acepta los permisos de cámara y ubicación.
+Play Protect puede avisar de que es una app no publicada en Play Store:
+pulsa «Instalar de todos modos».
+
+
+Firma y actualizaciones (IMPORTANTE)
+------------------------------------
+El APK se firma con la clave de firma/descargosat.jks.
+  Alias: descargosat
+  Contraseña del almacén y de la clave: PKRjFnravUhgTTUCZbzy
+Guarda la carpeta «firma» y esta contraseña en lugar seguro. Para que una
+versión nueva se instale ENCIMA de la anterior (sin perder los datos del
+teléfono) tiene que estar firmada con esta misma clave. Si se pierde, habría
+que desinstalar la app (exportando antes los expedientes) e instalar de nuevo.
+Mantén el repositorio de GitHub como PRIVADO porque contiene la clave.
+
+
+Cambiar la app
+--------------
+La aplicación está en app/src/main/assets/www/index.html (es la misma que la
+versión web). Tras modificarla, sube en app/build.gradle «versionCode» (2, 3...)
+y «versionName», y vuelve a compilar.
+
+Identificador de la app: es.descargosat.app
+Android mínimo: 7.0 (API 24) · compilado para Android 14 (API 34)

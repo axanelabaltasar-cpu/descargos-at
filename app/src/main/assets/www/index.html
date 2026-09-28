@@ -1,0 +1,1037 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A5E8C">
+<meta name="description" content="Trazabilidad de descargos en alta tensión entre distribuidora, empresa de gestión y empresa instaladora">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Descargos AT</title>
+<style>
+:root{
+  --bg:#F3F5F7; --card:#FFFFFF; --ink:#1B2430; --ink2:#566273; --line:#D9DEE4;
+  --brand:#0A5E8C; --brand2:#009FE3;
+  --D:#0A78B8; --G:#C85A17; --I:#1E8A55;
+  --danger:#C62828; --warn:#B26A00; --ok:#1E7D46; --info:#0A5E8C;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+.bar{position:sticky;top:0;z-index:20;background:var(--brand);color:#fff;display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));min-height:56px}
+.bar h1{font-size:18px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar button{background:transparent;border:0;color:#fff;font-size:15px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.bar button:active{background:rgba(255,255,255,.15)}
+.bar .ic{font-size:22px;line-height:1}
+main{max-width:760px;margin:0 auto;padding:12px 12px 96px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:0 0 12px}
+.card h2{font-size:17px;margin:0 0 8px}
+.card h3{font-size:15px;margin:12px 0 6px}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 14px;min-height:46px;cursor:pointer;font-weight:600;text-decoration:none;color:var(--ink)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn.ghost{background:transparent}
+.btn.full{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.fab{position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:15;border-radius:28px;padding:14px 20px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;color:#fff;letter-spacing:.2px}
+.chip.D{background:var(--D)}.chip.G{background:var(--G)}.chip.I{background:var(--I)}.chip.X{background:#6B7785}
+.banner{border-radius:var(--radius);padding:14px;margin:0 0 12px;color:#fff;font-weight:700}
+.banner .sub{font-weight:400;font-size:14px;opacity:.95;margin-top:4px}
+.banner.danger{background:var(--danger)}.banner.warn{background:var(--warn)}.banner.ok{background:var(--ok)}.banner.info{background:var(--info)}.banner.muted{background:#6B7785}
+.phase{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink2);margin:18px 4px 8px}
+.step{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-left:5px solid #C9D0D8;border-radius:10px;padding:12px;margin:0 0 8px;cursor:pointer}
+.step.done{border-left-color:var(--ok)}
+.step.avail{border-left-color:var(--brand2)}
+.step.blocked{opacity:.72;cursor:default}
+.step .st{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;background:#C9D0D8}
+.step.done .st{background:var(--ok)}.step.avail .st{background:var(--brand2)}
+.step .tt{font-weight:700}
+.step .meta{font-size:13px;color:var(--ink2);margin-top:2px}
+label.f{display:block;margin:12px 0 4px;font-weight:600;font-size:14px}
+label.f .req{color:var(--danger)}
+input[type=text],input[type=number],input[type=date],input[type=time],select,textarea{width:100%;border:1px solid #BCC5CF;border-radius:8px;padding:10px;background:#fff;min-height:44px}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(0,159,227,.35);border-color:var(--brand2)}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;background:#fff}
+.chk input{width:24px;height:24px;flex:none;margin:0}
+.yn{display:flex;gap:8px}
+.yn label{flex:1;display:flex;gap:8px;align-items:center;justify-content:center;border:1px solid #BCC5CF;border-radius:8px;padding:10px;min-height:44px}
+.yn input{width:20px;height:20px;margin:0}
+.decl{background:#FFF8E1;border:1px solid #F0D48A;border-radius:8px;padding:12px;margin:12px 0}
+.tbl{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:#FAFBFC}
+.tbl .tr{border-bottom:1px dashed var(--line);padding:6px 0}
+.tbl .tr:last-child{border-bottom:0}
+.tbl .tr .hd{font-size:12px;font-weight:700;color:var(--ink2);display:flex;justify-content:space-between;align-items:center}
+.tbl .cell{margin:4px 0}
+.tbl .cell small{display:block;color:var(--ink2);font-size:12px}
+.inline-chk{display:flex;flex-wrap:wrap;gap:6px}
+.inline-chk label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;font-size:14px}
+.inline-chk input{width:20px;height:20px;margin:0}
+.sig{border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0;background:#fff}
+.sig canvas{width:100%;height:150px;border:1px dashed #9AA6B2;border-radius:8px;background:#fff;touch-action:none;display:block}
+.photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.photos img{width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.ph{position:relative}
+.ph button{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:50%;width:26px;height:26px}
+.gps{font-size:13px;padding:8px 10px;border-radius:8px;background:#EEF4F8;margin:10px 0}
+.warnbox{background:#FDECEA;border:1px solid #F5C2C0;color:#8E1B1B;border-radius:8px;padding:12px;margin:10px 0;font-weight:600}
+.okbox{background:#E7F5EC;border:1px solid #B7E0C5;color:#155D34;border-radius:8px;padding:12px;margin:10px 0}
+.infobox{background:#EAF5FB;border:1px solid #BFE3F5;border-radius:8px;padding:12px;margin:10px 0}
+.list-exp{cursor:pointer}
+.kv{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:4px 10px;font-size:14px}
+.kv div:nth-child(odd){color:var(--ink2)}
+.sticky-foot{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 70%,transparent);padding:12px 0 max(12px,env(safe-area-inset-bottom))}
+.toast{position:fixed;left:50%;top:72px;transform:translateX(-50%);background:#1B2430;color:#fff;padding:12px 16px;border-radius:10px;z-index:50;max-width:90vw;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.hash{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;word-break:break-all;color:var(--ink2)}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+table.t th{background:#EAF5FB}
+.help h3{color:var(--brand)}
+/* Informe */
+.report{background:#fff;padding:16px;border-radius:var(--radius);border:1px solid var(--line)}
+.report h1{font-size:20px;margin:0 0 4px;border-bottom:3px solid var(--brand2);padding-bottom:6px}
+.report h2{font-size:16px;margin:18px 0 6px;color:var(--brand);border-bottom:1px solid var(--line);padding-bottom:3px;break-after:avoid}
+.report .ev{break-inside:avoid;margin:0 0 10px}
+.report .sigs{display:flex;flex-wrap:wrap;gap:10px}
+.report .sigs div{border:1px solid var(--line);border-radius:6px;padding:6px;width:200px;font-size:12px}
+.report .sigs img{width:100%;height:70px;object-fit:contain}
+.report .pp img{width:31%;margin:1%;border:1px solid var(--line)}
+@media print{
+  body{background:#fff}
+  .bar,.noprint,.fab,.toast{display:none!important}
+  main{max-width:none;padding:0}
+  .report{border:0;padding:0}
+  @page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<main id="app"></main>
+<input type="file" id="importFile" accept=".json,.txt,application/json,text/plain" multiple hidden>
+<script>
+'use strict';
+/* =====================================================================
+   Descargos AT · Trazabilidad entre distribuidora, gestora e instaladora
+   App web instalable, sin servidor. Datos en el dispositivo (IndexedDB).
+   Cada registro es un evento sellado con SHA-256 y encadenado por
+   dispositivo; los expedientes se intercambian por fichero y se fusionan.
+   ===================================================================== */
+const APP_VERSION = '1.0.0';
+const FORMAT = 'descargo-at';
+
+/* ---------- SHA-256 (implementación propia, síncrona) ---------- */
+const K256 = new Uint32Array([
+0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
+function sha256(str){
+  const b = new TextEncoder().encode(str), l = b.length;
+  const bl = ((l + 9 + 63) >> 6) << 6, m = new Uint8Array(bl);
+  m.set(b); m[l] = 0x80;
+  const dv = new DataView(m.buffer), bits = l * 8;
+  dv.setUint32(bl - 4, bits >>> 0); dv.setUint32(bl - 8, Math.floor(bits / 4294967296));
+  const H = new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);
+  const w = new Uint32Array(64);
+  const r = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let o = 0; o < bl; o += 64){
+    for (let i = 0; i < 16; i++) w[i] = dv.getUint32(o + i * 4);
+    for (let i = 16; i < 64; i++){
+      const s0 = r(w[i-15],7) ^ r(w[i-15],18) ^ (w[i-15] >>> 3);
+      const s1 = r(w[i-2],17) ^ r(w[i-2],19) ^ (w[i-2] >>> 10);
+      w[i] = (w[i-16] + s0 + w[i-7] + s1) >>> 0;
+    }
+    let a=H[0],bb=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for (let i = 0; i < 64; i++){
+      const S1 = r(e,6) ^ r(e,11) ^ r(e,25), ch = (e & f) ^ (~e & g);
+      const t1 = (h + S1 + ch + K256[i] + w[i]) >>> 0;
+      const S0 = r(a,2) ^ r(a,13) ^ r(a,22), mj = (a & bb) ^ (a & c) ^ (bb & c);
+      const t2 = (S0 + mj) >>> 0;
+      h=g; g=f; f=e; e=(d + t1) >>> 0; d=c; c=bb; bb=a; a=(t1 + t2) >>> 0;
+    }
+    H[0]+=a;H[1]+=bb;H[2]+=c;H[3]+=d;H[4]+=e;H[5]+=f;H[6]+=g;H[7]+=h;
+  }
+  return Array.from(H, x => x.toString(16).padStart(8,'0')).join('');
+}
+function stable(v){
+  if (v === null || typeof v !== 'object') return JSON.stringify(v === undefined ? null : v);
+  if (Array.isArray(v)) return '[' + v.map(stable).join(',') + ']';
+  return '{' + Object.keys(v).filter(k => v[k] !== undefined).sort().map(k => JSON.stringify(k) + ':' + stable(v[k])).join(',') + '}';
+}
+function eventHash(ev){ const c = Object.assign({}, ev); delete c.hash; return sha256(stable(c)); }
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function uuid(){
+  if (window.crypto && crypto.randomUUID) { try { return crypto.randomUUID(); } catch(e){} }
+  const a = new Uint8Array(16); (window.crypto||{}).getRandomValues ? crypto.getRandomValues(a) : a.forEach((_,i)=>a[i]=Math.random()*256|0);
+  a[6]=(a[6]&15)|64; a[8]=(a[8]&63)|128;
+  const h=[...a].map(x=>x.toString(16).padStart(2,'0')).join('');
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+const pad = n => String(n).padStart(2,'0');
+const fmtDT = iso => { if(!iso) return ''; const d=new Date(iso); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+const fmtD = s => { if(!s) return ''; const [y,m,d]=s.split('-'); return d?`${d}/${m}/${y}`:s; };
+const nowHM = () => { const d=new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+function toast(msg, ms=3200){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), ms); }
+function ls(k, v){ try{ if(v===undefined){ const x=localStorage.getItem(k); return x?JSON.parse(x):null; } localStorage.setItem(k, JSON.stringify(v)); }catch(e){ return null; } }
+
+/* ---------- almacenamiento (IndexedDB con respaldo en memoria) ---------- */
+const DB = {
+  db:null, mem:new Map(),
+  open(){ return new Promise(res => {
+    if (!('indexedDB' in window)) return res(null);
+    const rq = indexedDB.open('descargos-at', 1);
+    rq.onupgradeneeded = () => rq.result.createObjectStore('exps', {keyPath:'id'});
+    rq.onsuccess = () => { this.db = rq.result; res(this.db); };
+    rq.onerror = () => res(null);
+  });},
+  tx(mode){ return this.db.transaction('exps', mode).objectStore('exps'); },
+  all(){ if(!this.db) return Promise.resolve([...this.mem.values()]);
+    return new Promise((res,rej)=>{ const r=this.tx('readonly').getAll(); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+  put(x){ if(!this.db){ this.mem.set(x.id,x); return Promise.resolve(); }
+    return new Promise((res,rej)=>{ const r=this.tx('readwrite').put(x); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+  del(id){ if(!this.db){ this.mem.delete(id); return Promise.resolve(); }
+    return new Promise((res,rej)=>{ const r=this.tx('readwrite').delete(id); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); }
+};
+let EXPS = new Map();
+async function saveExp(exp){ exp.updated = new Date().toISOString(); EXPS.set(exp.id, exp); await DB.put(exp); }
+
+/* ---------- perfil y dispositivo ---------- */
+let DEV = ls('dat.dev'); if(!DEV){ DEV = uuid(); ls('dat.dev', DEV); }
+let PROFILE = ls('dat.profile');
+const ROLES = { D:'Empresa distribuidora', G:'Empresa de gestión', I:'Empresa instaladora' };
+const FIGS = {
+  D:['Responsable de la instalación (RI)','Agente de descargo (AD)','Centro de Control','Otro'],
+  G:['Coordinador de la gestora (CG)','Técnico de prevención','Otro'],
+  I:['Jefe de trabajo (JT)','Recurso preventivo','Representante de la instaladora','Trabajador','Otro']
+};
+
+/* ---------- definición del procedimiento ---------- */
+const CHK_F02V = ['Documentación completa y en vigor','JT trabajador cualificado con autorización escrita','Evaluación de riesgos específica adjunta','Formación y aptitud médica en vigor de todo el personal','Riesgos propios de la instalación entregados a la instaladora (RD 171/2004)','Medidas de emergencia de la instalación entregadas','Procedimiento PR-DES-AT-01 entregado'];
+const ALARM_TYPES = ['Tensión detectada al verificar','Consignación alterada (bloqueo, cartel o tierra)','Accidente o incidente','Paralización por riesgo grave'];
+const INC_TYPES = ['Parada de los trabajos','Reanudación de los trabajos','Traspaso de jefe de trabajo','Prórroga solicitada','Meteorología adversa'].concat(ALARM_TYPES, ['Personal no incluido en la F-02','Otra']);
+
+const STEPS = [
+ {id:'F01', ficha:'F-01', title:'Solicitud de descargo', role:['G','D'], phase:'Preparación', requires:[],
+  help:'La gestora solicita el descargo a la distribuidora con al menos 15 días hábiles de antelación.',
+  fields:[
+   {k:'ref_gestora',t:'text',l:'Nº de expediente / orden de trabajo de la gestora'},
+   {k:'instalacion',t:'area',l:'Instalación: línea, tramo (apoyos), CT/CR, celdas',req:1},
+   {k:'tension',t:'num',l:'Tensión nominal (kV)',req:1},
+   {k:'tipo',t:'sel',l:'Tipo de instalación',opts:['Línea aérea','Línea subterránea','Centro de transformación','Centro de reparto','Mixta'],req:1},
+   {k:'trabajos',t:'area',l:'Descripción de los trabajos',req:1},
+   {k:'corte_cond',t:'yn',l:'¿Hay corte o empalme de conductores?',req:1},
+   {k:'fecha',t:'date',l:'Fecha propuesta',req:1},
+   {k:'fecha_alt',t:'date',l:'Fecha alternativa'},
+   {k:'h_ini',t:'time',l:'Hora de inicio del descargo',req:1},
+   {k:'h_dev',t:'time',l:'Hora de devolución prevista',req:1},
+   {k:'instaladora',t:'text',l:'Empresa instaladora (razón social, CIF)',req:1},
+   {k:'jt',t:'text',l:'Jefe de trabajo propuesto (nombre, DNI, teléfono)',req:1},
+   {k:'cg',t:'text',l:'Coordinador de la gestora (nombre, teléfono)',req:1},
+   {k:'planos',t:'yn',l:'Planos y esquema unifilar con la zona marcada adjuntos'},
+   {k:'obs',t:'area',l:'Observaciones: elementos próximos en tensión, accesos, clientes sensibles'}],
+  photos:{hint:'Foto del plano o del unifilar con la zona de trabajo marcada'},
+  signers:[{fig:'CG',l:'Coordinador de la gestora',req:1}]},
+
+ {id:'F01R', ficha:'F-01', title:'Recepción y nº de descargo', role:['D'], phase:'Preparación', requires:['F01'],
+  help:'La distribuidora acusa recibo y asigna el número de descargo, que identifica el expediente en todas las fichas.',
+  fields:[{k:'num',t:'text',l:'Nº de descargo asignado',req:1},{k:'obs',t:'area',l:'Observaciones'}],
+  signers:[{fig:'RI',l:'Recibido por la distribuidora',req:1}]},
+
+ {id:'F02', ficha:'F-02', title:'Documentación CAE de la instaladora', role:['I'], phase:'Preparación', requires:['F01'],
+  help:'La instaladora aporta empresa, personal, equipos y evaluación de riesgos. Debe figurar un jefe de trabajo.',
+  fields:[
+   {k:'empresa',t:'text',l:'Empresa instaladora, CIF, dirección',req:1},
+   {k:'modalidad',t:'sel',l:'Modalidad preventiva',opts:['Servicio de prevención propio','Servicio de prevención ajeno','Servicio mancomunado'],req:1},
+   {k:'subcontratas',t:'area',l:'Subcontratistas que intervienen (razón social, CIF)'},
+   {k:'er',t:'yn',l:'Evaluación de riesgos específica de los trabajos adjunta',req:1},
+   {k:'proc',t:'yn',l:'Procedimiento de trabajo adjunto',req:1},
+   {k:'rp',t:'yn',l:'¿Es necesario recurso preventivo?',req:1},
+   {k:'rp_nombre',t:'text',l:'Recurso preventivo (nombre)'},
+   {k:'sanitario',t:'text',l:'Centro sanitario más cercano y teléfono',req:1},
+   {k:'evac',t:'text',l:'Emergencias (112) y ruta de evacuación',req:1},
+   {k:'personal',t:'table',l:'Personal',min:1,rows:2,cols:[
+     {k:'nombre',l:'Nombre y apellidos',t:'text',req:1},{k:'dni',l:'DNI',t:'text',req:1},
+     {k:'funcion',l:'Función',t:'sel',opts:['Jefe de trabajo','Trabajador cualificado','Trabajador autorizado','Recurso preventivo','Otro'],req:1},
+     {k:'aut',l:'Autorización escrita (fecha)',t:'date'},{k:'form',l:'Formación riesgo eléctrico (fecha)',t:'date'},
+     {k:'apt',l:'Aptitud médica (fecha)',t:'date'},{k:'pa',l:'Primeros auxilios',t:'chk'}]},
+   {k:'equipos',t:'table',l:'Equipos',min:0,rows:4,
+    def:[{equipo:'Detector de tensión (rango kV)'},{equipo:'Equipos de puesta a tierra portátiles (sección mm²)'},{equipo:'Guantes aislantes (clase)'},{equipo:'Pértigas'}],
+    cols:[{k:'equipo',l:'Equipo',t:'text'},{k:'modelo',l:'Marca / modelo',t:'text'},{k:'serie',l:'Nº de serie',t:'text'},{k:'rev',l:'Última revisión',t:'date'}]}],
+  validate:d => (d.personal||[]).some(p=>p.funcion==='Jefe de trabajo') ? null : 'Debe figurar al menos un jefe de trabajo en el personal.',
+  photos:{hint:'Fotos de documentos (autorizaciones, certificados de equipos)'},
+  signers:[{fig:'REP',l:'Representante de la instaladora',req:1}]},
+
+ {id:'F02V', ficha:'F-02', title:'Validación de la documentación CAE', role:['G'], phase:'Preparación', requires:['F02'],
+  help:'La gestora comprueba la documentación y la remite a la distribuidora.',
+  fields:[
+   {k:'checks',t:'chks',l:'Comprobaciones',opts:CHK_F02V},
+   {k:'resultado',t:'sel',l:'Resultado',opts:['Validada','Rechazada'],req:1},
+   {k:'obs',t:'area',l:'Observaciones'}],
+  validate:d => d.resultado==='Validada' && (d.checks||[]).length<CHK_F02V.length ? 'Para validar deben estar marcadas todas las comprobaciones.' : null,
+  signers:[{fig:'CG',l:'Validación de la gestora',req:1}]},
+
+ {id:'F03A', ficha:'F-03', title:'Autorización y programa de maniobras', role:['D'], phase:'Preparación', requires:['F01R','F02V'],
+  help:'La distribuidora autoriza, pide cambios o deniega, y emite el programa de maniobras.',
+  fields:[
+   {k:'resolucion',t:'sel',l:'Resolución',opts:['Autorizado','Autorizado con cambios','Denegado'],req:1},
+   {k:'motivo',t:'area',l:'Motivo de cambios o denegación'},
+   {k:'fecha',t:'date',l:'Fecha autorizada',req:1},
+   {k:'h_ini',t:'time',l:'Hora de inicio autorizada',req:1},
+   {k:'h_fin',t:'time',l:'Hora de fin autorizada',req:1},
+   {k:'ri',t:'text',l:'Responsable de la instalación (RI) y teléfono del Centro de Control',req:1},
+   {k:'ad',t:'text',l:'Agente de descargo (AD) asignado y teléfono',req:1},
+   {k:'clientes',t:'num',l:'Clientes afectados (nº)'},
+   {k:'alternativa',t:'text',l:'Alimentación alternativa prevista'},
+   {k:'tramitacion',t:'yn',l:'Tramitación de la interrupción y avisos a clientes hechos',req:1},
+   {k:'programa',t:'table',l:'Programa de maniobras (en orden)',min:1,rows:5,
+    def:[{maniobra:'Abrir interruptor',regla:'1'},{maniobra:'Abrir seccionador',regla:'1'},{maniobra:'Bloquear y colocar cartel',regla:'2'},{maniobra:'Verificar ausencia de tensión',regla:'3'},{maniobra:'Cerrar seccionador de PaT / colocar PaT portátil',regla:'4'}],
+    cols:[{k:'aparato',l:'Instalación / aparato',t:'text',req:1},{k:'maniobra',l:'Maniobra',t:'text',req:1},{k:'regla',l:'Regla',t:'sel',opts:['1','2','3','4'],req:1}]},
+   {k:'zona',t:'area',l:'Zona protegida: límites entre … y …',req:1},
+   {k:'en_tension',t:'area',l:'Elementos que permanecen en tensión cerca de la zona'},
+   {k:'realim',t:'chks',l:'Fuentes de realimentación revisadas',opts:['Cabeceras','Anillos','Generación distribuida / autoconsumo','Grupos de clientes','Retorno por BT'],all:1}],
+  validate:d => d.resolucion!=='Denegado' && d.tramitacion!=='Sí' && Number(d.clientes||0)>0 ? 'Con clientes afectados no se autoriza sin la tramitación y los avisos hechos.' : null,
+  signers:[{fig:'RI',l:'Responsable de la instalación',req:1}]},
+
+ {id:'F03C', ficha:'F-03', title:'Reunión de coordinación previa', role:['G'], phase:'Preparación', requires:['F03A'],
+  help:'Reunión D-2 con AD, JT y CG. Si es a distancia, las firmas que falten se recogen el día D.',
+  fields:[
+   {k:'fecha',t:'date',l:'Fecha',req:1},{k:'lugar',t:'text',l:'Lugar o medio',req:1},
+   {k:'asistentes',t:'area',l:'Asistentes (nombre y empresa)',req:1},
+   {k:'puntos',t:'chks',l:'Puntos tratados',opts:['Alcance','Zona protegida','Zona de trabajo','Riesgos y medidas','Horarios','Protocolo de comunicaciones'],all:1},
+   {k:'acuerdos',t:'area',l:'Acuerdos y cambios al programa'}],
+  signers:[{fig:'CG',l:'Gestora (CG)',req:1},{fig:'RI/AD',l:'Distribuidora (RI o AD)'},{fig:'JT',l:'Instaladora (JT)'}]},
+
+ {id:'D1', ficha:'—', title:'Confirmación D-1', role:['G'], phase:'Preparación', requires:['F03C'], optional:1,
+  help:'La gestora confirma con las tres partes el día anterior. Si algo falla, anula y reprograma.',
+  fields:[
+   {k:'checks',t:'chks',l:'Confirmado',opts:['Personal','Materiales y equipos','Previsión meteorológica favorable','Avisos a clientes hechos']},
+   {k:'decision',t:'sel',l:'Decisión',opts:['Confirmado','Anulado y reprogramado'],req:1},
+   {k:'obs',t:'area',l:'Observaciones'}],
+  signers:[{fig:'CG',l:'Coordinador de la gestora',req:1}]},
+
+ {id:'F04A', ficha:'F-04 A', title:'Reunión en campo y comprobaciones previas', role:['D'], phase:'Día D · descargo', requires:['F03C'], gps:1,
+  help:'Antes de maniobrar: identidad del personal frente a la F-02, EPI, meteorología y zonas. Si algo no se cumple, no se empieza.',
+  fields:[
+   {k:'checks',t:'chks',l:'Comprobaciones (todas obligatorias)',opts:['Personal presente coincide con la F-02 (DNI comprobado)','EPI y equipos del personal en buen estado y en fecha','Condiciones meteorológicas adecuadas','Todos conocen la zona protegida, la zona de trabajo y lo que queda en tensión'],all:1},
+   {k:'presentes',t:'area',l:'Personal presente (nombre y empresa)',req:1},
+   {k:'meteo',t:'text',l:'Meteorología observada'}],
+  signers:[{fig:'AD',l:'Agente de descargo',req:1},{fig:'JT',l:'Jefe de trabajo',req:1},{fig:'CG',l:'Coordinador de la gestora'}]},
+
+ {id:'RIAUT', ficha:'F-03 B', title:'Orden del RI para iniciar maniobras', role:['D'], phase:'Día D · descargo', requires:['F04A'],
+  help:'Sin orden del RI repetida y confirmada no hay maniobra.',
+  fields:[
+   {k:'ri',t:'text',l:'RI / Centro de Control que da la orden',req:1},
+   {k:'canal',t:'sel',l:'Canal',opts:['Teléfono grabado','Radio grabada'],req:1},
+   {k:'hora',t:'now',l:'Hora de la orden',req:1},
+   {k:'repetida',t:'chk',l:'Orden repetida literalmente y confirmada («correcto»)',req:1}],
+  signers:[{fig:'AD',l:'Agente de descargo',req:1}]},
+
+ {id:'MAN', ficha:'F-03 B', title:'Maniobra ejecutada (reglas 1 a 4)', role:['D'], phase:'Día D · descargo', requires:['RIAUT'], repeatable:1, gps:1,
+  help:'Registra cada maniobra del programa en el momento de ejecutarla.',
+  fields:[
+   {k:'fila',t:'prog',l:'Maniobra del programa',req:1},
+   {k:'hora',t:'now',l:'Hora de ejecución',req:1},
+   {k:'repetida',t:'chk',l:'Orden del RI repetida y confirmada',req:1},
+   {k:'detector',t:'chk',l:'Si es verificación: detector comprobado antes y después'},
+   {k:'resultado',t:'sel',l:'Resultado',opts:['Ejecutada correctamente','No ejecutada / incidencia'],req:1},
+   {k:'obs',t:'area',l:'Observaciones'}],
+  photos:{hint:'Bloqueo, cartel o puesta a tierra colocada'},
+  signers:[{fig:'AD',l:'Agente de descargo',req:1}]},
+
+ {id:'F04', ficha:'F-04 B', title:'Entrega de la zona protegida al JT', role:['D'], phase:'Día D · descargo', requires:['F04A','RIAUT','MAN'], gps:1,
+  help:'Entrega personal y en campo. El AD conserva las llaves de los candados.',
+  fields:[
+   {k:'comunicado',t:'chk',l:'Comunicado al RI «zona protegida establecida»',req:1},
+   {k:'puntos',t:'table',l:'Estado de la zona protegida por punto de corte',min:1,rows:2,allChecks:1,cols:[
+     {k:'punto',l:'Punto de corte',t:'text',req:1},{k:'abierto',l:'Aparato abierto',t:'chk'},{k:'bloqueo',l:'Bloqueo / cartel',t:'chk'},
+     {k:'ausencia',l:'Ausencia de tensión verificada',t:'chk'},{k:'pat',l:'PaT y CC colocada',t:'chk'},{k:'visible',l:'Visible desde la zona de trabajo',t:'chk'}]},
+   {k:'limites',t:'area',l:'Límites de la zona protegida',req:1,from:['F03A','zona']},
+   {k:'en_tension',t:'area',l:'Elementos en tensión próximos y medidas indicadas al JT',from:['F03A','en_tension']},
+   {k:'candados',t:'text',l:'Candados de consignación (nº) y custodia de llaves',req:1},
+   {k:'candado_jt',t:'yn',l:'Candado personal del JT en caja de bloqueo colectivo'},
+   {k:'hora',t:'now',l:'Hora de entrega',req:1},
+   {k:'decl',t:'decl',l:'Declaración del JT',text:'Recibo la instalación descrita sin tensión, consignada y puesta a tierra en los puntos de corte. Me comprometo a no salir de la zona protegida y a devolverla mediante la F-06.'}],
+  validate:d => (d.puntos||[]).some(p => p.punto && !(p.abierto&&p.bloqueo&&p.ausencia&&p.pat)) ? 'En cada punto de corte deben estar confirmadas las reglas 1 a 4 (abierto, bloqueo, ausencia de tensión y PaT).' : null,
+  photos:{hint:'Puntos de corte, bloqueos y tierras'},
+  signers:[{fig:'AD',l:'Agente de descargo (entrega)',req:1},{fig:'JT',l:'Jefe de trabajo (recibe)',req:1},{fig:'CG',l:'Coordinador de la gestora'}]},
+
+ {id:'F05A', ficha:'F-05 A', title:'Zona de trabajo (5ª regla)', role:['I'], phase:'Trabajos', requires:['F04'], gps:1,
+  help:'El JT verifica en el punto de trabajo, coloca sus tierras, protege lo próximo en tensión y señaliza.',
+  fields:[
+   {k:'checks',t:'chks',l:'Quinta regla y preparación (todas obligatorias)',all:1,opts:['Elemento de trabajo identificado (nº de apoyo, placa de celda, cable)','Ausencia de tensión verificada en el punto de trabajo, detector comprobado antes y después','Puestas a tierra propias colocadas a ambos lados de la zona de trabajo','Pantallas o protectores aislantes frente a elementos próximos en tensión (o no hay)','Zona de trabajo delimitada y señalizada','Riesgos no eléctricos controlados (altura, tráfico, zanjas, izado)']},
+   {k:'tierras',t:'table',l:'Puestas a tierra propias',min:1,rows:2,cols:[{k:'ubicacion',l:'Ubicación',t:'text',req:1},{k:'hora',l:'Hora colocada',t:'time',req:1}]}],
+  photos:{hint:'Tierras propias colocadas y señalización', min:1},
+  signers:[{fig:'JT',l:'Jefe de trabajo',req:1},{fig:'RP',l:'Recurso preventivo'}]},
+
+ {id:'F05B', ficha:'F-05 B', title:'Inicio de los trabajos', role:['I'], phase:'Trabajos', requires:['F05A'],
+  fields:[{k:'hora',t:'now',l:'Hora de inicio',req:1},{k:'personal',t:'num',l:'Personal en zona (nº)',req:1},{k:'obs',t:'area',l:'Observaciones'}],
+  signers:[{fig:'JT',l:'Jefe de trabajo',req:1}]},
+
+ {id:'F05C', ficha:'F-05 C', title:'Cierre de la zona de trabajo', role:['I'], phase:'Trabajos', requires:['F05B'], gps:1,
+  help:'Personal fuera y contado, herramientas recogidas, tierras propias retiradas.',
+  fields:[
+   {k:'checks',t:'chks',l:'Cierre (todas obligatorias)',all:1,opts:['Trabajos terminados y comprobados','Herramientas, materiales y residuos recogidos','Todo el personal fuera de la zona y contado','Puestas a tierra propias retiradas (todas)','Señalización y protecciones propias retiradas']},
+   {k:'tierras',t:'table',l:'Retirada de las tierras propias',min:1,fixedFrom:['F05A','tierras'],cols:[{k:'ubicacion',l:'Ubicación',t:'text',ro:1},{k:'retirada',l:'Hora retirada',t:'time',req:1}]},
+   {k:'hora',t:'now',l:'Hora de fin de los trabajos',req:1}],
+  photos:{hint:'Zona recogida'},
+  signers:[{fig:'JT',l:'Jefe de trabajo',req:1},{fig:'RP',l:'Recurso preventivo'}]},
+
+ {id:'F06A', ficha:'F-06 A', title:'Devolución de la instalación', role:['I'], phase:'Devolución y reposición', requires:['F05C'], gps:1,
+  help:'Desde la devolución la instalación se considera EN TENSIÓN.',
+  fields:[
+   {k:'estado',t:'sel',l:'Estado de la instalación',opts:['Apta para servicio','Con restricciones'],req:1},
+   {k:'restricciones',t:'area',l:'Restricciones (si las hay)'},
+   {k:'candado',t:'sel',l:'Candado personal del JT retirado de la caja de bloqueo',opts:['Sí','No aplica','No'],req:1},
+   {k:'hora',t:'now',l:'Hora de devolución',req:1},
+   {k:'decl',t:'decl',l:'Declaración del JT',text:'Los trabajos han terminado, todo el personal está fuera de la zona, he retirado mis puestas a tierra y señalización. Devuelvo la instalación. Desde este momento se considera en tensión.'}],
+  validate:d => d.candado==='No' ? 'El JT debe retirar su candado personal antes de devolver la instalación.' : (d.estado==='Con restricciones' && !d.restricciones ? 'Describe las restricciones.' : null),
+  signers:[{fig:'JT',l:'Jefe de trabajo (devuelve)',req:1},{fig:'AD',l:'Agente de descargo (recibe)',req:1}]},
+
+ {id:'F06B', ficha:'F-06 B', title:'Reposición de la tensión', role:['D'], phase:'Devolución y reposición', requires:['F06A'],
+  blockedMsg:'PROHIBIDO REPONER: falta la devolución F-06 A firmada por el jefe de trabajo.',
+  help:'Orden inverso y siempre bajo orden del RI.',
+  fields:[
+   {k:'ri',t:'text',l:'RI que ordena la reposición',req:1},
+   {k:'repetida',t:'chk',l:'Orden repetida y confirmada',req:1},
+   {k:'ops',t:'table',l:'Operaciones de reposición',fixed:1,
+    def:[{op:'Retirada de PaT y CC de los puntos de corte'},{op:'Desbloqueo y retirada de carteles'},{op:'Cierre de seccionadores'},{op:'Cierre de interruptores'},{op:'Comunicación de reposición al RI'}],
+    cols:[{k:'op',l:'Operación',t:'text',ro:1},{k:'hora',l:'Hora',t:'time',req:1}]}],
+  signers:[{fig:'AD',l:'Agente de descargo',req:1}]},
+
+ {id:'F06C', ficha:'F-06 C', title:'Cierre del expediente', role:['G'], phase:'Devolución y reposición', requires:['F06B'],
+  fields:[
+   {k:'checks',t:'chks',l:'Cierre (todas obligatorias)',all:1,opts:['F-01 a F-06 completas y firmadas','Incidencias registradas y comunicadas','Grabaciones y registro del Centro de Control referenciados','Expediente archivado']},
+   {k:'obs',t:'area',l:'Observaciones'}],
+  signers:[{fig:'CG',l:'Coordinador de la gestora',req:1},{fig:'RI',l:'Responsable de la instalación (distribuidora)'}]},
+
+ {id:'INC', ficha:'F-05 B', title:'Incidencia, parada o traspaso', role:['D','G','I'], phase:'Registros', requires:['F01'], repeatable:1, gps:1,
+  help:'Ante cualquier duda: parar, considerar en tensión y avisar al AD.',
+  fields:[
+   {k:'tipo',t:'sel',l:'Tipo',opts:INC_TYPES,req:1},
+   {k:'hora',t:'now',l:'Hora',req:1},
+   {k:'desc',t:'area',l:'Descripción',req:1},
+   {k:'medidas',t:'area',l:'Medidas adoptadas / avisos dados'}],
+  photos:{hint:'Situación observada'},
+  signers:[{fig:'AUT',l:'Quien registra',req:1},{fig:'2ª',l:'Segunda firma (p. ej. JT entrante, AD)'}]},
+
+ {id:'COM', ficha:'R-01', title:'Comunicación / orden', role:['D','G','I'], phase:'Registros', requires:['F01'], repeatable:1,
+  help:'Registro de órdenes y avisos: quién, a quién, qué y si se repitió y confirmó.',
+  fields:[
+   {k:'hora',t:'now',l:'Hora',req:1},{k:'de',t:'text',l:'De (nombre, empresa)',req:1,self:1},{k:'a',t:'text',l:'A (nombre, empresa)',req:1},
+   {k:'mensaje',t:'area',l:'Mensaje / orden',req:1},{k:'repetida',t:'chk',l:'Repetida y confirmada'}],
+  signers:[]}
+];
+const STEP = Object.fromEntries(STEPS.map(s => [s.id, s]));
+const PHASES = ['Preparación','Día D · descargo','Trabajos','Devolución y reposición','Registros'];
+
+/* ---------- lógica del expediente ---------- */
+const evs = (exp, sid) => exp.events.filter(e => e.step === sid).sort((a,b) => a.ts < b.ts ? -1 : 1);
+const last = (exp, sid) => { const l = evs(exp, sid); return l[l.length-1] || null; };
+function program(exp){ const f = last(exp,'F03A'); return f ? (f.data.programa||[]) : []; }
+function manStatus(exp){
+  const prog = program(exp), done = new Set(evs(exp,'MAN').filter(e => (e.data.resultado||'').startsWith('Ejecutada')).map(e => String(e.data.fila)));
+  const n = prog.filter((_,i) => done.has(String(i))).length;
+  return {n, total:prog.length, ok: prog.length>0 && n===prog.length};
+}
+function stepOk(exp, sid){
+  if (sid==='MAN') return manStatus(exp).ok;
+  const e = last(exp, sid); if (!e) return false;
+  if (sid==='F02V') return e.data.resultado === 'Validada';
+  if (sid==='F03A') return e.data.resolucion !== 'Denegado';
+  if (sid==='D1') return e.data.decision === 'Confirmado';
+  return true;
+}
+function missing(exp, s){ return s.requires.filter(r => !stepOk(exp, r)); }
+function canRole(s){ return PROFILE && s.role.includes(PROFILE.rol); }
+function expNum(exp){ const r = last(exp,'F01R'); return r ? r.data.num : null; }
+function expTitle(exp){ const n = expNum(exp); return n ? `Descargo ${n}` : 'Descargo (sin nº asignado)'; }
+function expInst(exp){ const f = last(exp,'F01'); return f ? f.data.instalacion : ''; }
+
+function status(exp){
+  const has = sid => !!last(exp, sid);
+  if (!has('F01')) return {c:'muted', t:'Borrador', s:'Registra la solicitud F-01.'};
+  if (has('F06C')) return {c:'ok', t:'Expediente cerrado', s:'Tensión repuesta y documentación completa.'};
+  if (has('F06B')) return {c:'ok', t:'Tensión repuesta', s:'Pendiente del cierre del expediente por la gestora.'};
+  if (has('F06A')) return {c:'danger', t:'Instalación devuelta · CONSIDERAR EN TENSIÓN', s:'Reposición en curso por la distribuidora.'};
+  const f4 = last(exp,'F04');
+  const alarm = evs(exp,'INC').filter(e => ALARM_TYPES.includes(e.data.tipo) && (!f4 || e.ts > f4.ts)).pop();
+  if (alarm && (has('F04') || has('MAN'))) return {c:'danger', t:'PARADA · ' + alarm.data.tipo, s:'Trabajos detenidos. Considerar en tensión hasta nueva F-04.'};
+  const d1 = last(exp,'D1');
+  if (d1 && d1.data.decision !== 'Confirmado' && !has('F04A')) return {c:'muted', t:'Anulado y reprogramado', s:d1.data.obs||''};
+  if (has('F05B')) { const jt = (last(exp,'F04').sigs||[]).find(x => x.fig==='JT'); return {c:'warn', t:'Trabajos en curso', s:'Zona protegida entregada' + (jt ? ' a ' + jt.name : '') + '. Trabajar solo dentro de la zona de trabajo.'}; }
+  if (has('F05A')) return {c:'warn', t:'Zona de trabajo establecida', s:'Pendiente de iniciar los trabajos.'};
+  if (has('F04')) return {c:'warn', t:'Zona protegida entregada al JT', s:'Pendiente de la 5ª regla en la zona de trabajo.'};
+  if (has('RIAUT') || has('MAN')) { const m = manStatus(exp); return {c:'danger', t:'Maniobras en curso · CONSIDERAR EN TENSIÓN', s:`${m.n} de ${m.total} maniobras ejecutadas.`}; }
+  const a = last(exp,'F03A');
+  if (a && a.data.resolucion === 'Denegado') return {c:'muted', t:'Descargo denegado', s:a.data.motivo||''};
+  if (a) return {c:'info', t:'Autorizado · pendiente del día D', s:`${fmtD(a.data.fecha)} de ${a.data.h_ini} a ${a.data.h_fin}`};
+  return {c:'info', t:'En preparación', s:'Solicitud, documentación CAE y autorización.'};
+}
+
+/* ---------- integridad ---------- */
+function verify(exp){
+  const byDev = {}, bad = [];
+  for (const e of exp.events){
+    if (eventHash(e) !== e.hash) bad.push(e);
+    (byDev[e.dev] = byDev[e.dev] || []).push(e);
+  }
+  const devices = Object.entries(byDev).map(([dev, list]) => {
+    list.sort((a,b) => a.dseq - b.dseq);
+    const issues = []; let prev = 'GENESIS:' + exp.id;
+    list.forEach((e,i) => {
+      if (e.dseq !== i+1) issues.push(`falta el registro nº ${i+1} de este dispositivo (aún no compartido o eliminado)`);
+      if (e.prev !== prev) issues.push(`cadena rota en el registro nº ${e.dseq}`);
+      prev = e.hash;
+    });
+    const a = list[list.length-1].author || {};
+    return {dev, n:list.length, who:`${a.name||'?'} · ${ROLES[a.rol]||''}`, issues:[...new Set(issues)]};
+  });
+  const fp = sha256(exp.events.map(e => e.hash).sort().join(''));
+  return {ok: bad.length===0 && devices.every(d => !d.issues.length), bad, devices, fp, n:exp.events.length};
+}
+
+async function addEvent(exp, sid, data, extra){
+  const mine = exp.events.filter(e => e.dev === DEV).sort((a,b) => a.dseq - b.dseq);
+  const prevEv = mine[mine.length-1];
+  const ev = {
+    v:1, exp:exp.id, id:uuid(), step:sid, dev:DEV, dseq:(prevEv ? prevEv.dseq : 0) + 1,
+    ts:new Date().toISOString(), tz:Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+    author:{name:PROFILE.name, dni:PROFILE.dni||'', empresa:PROFILE.empresa, rol:PROFILE.rol, fig:PROFILE.fig},
+    data, gps:extra.gps||null, photos:extra.photos||[], sigs:extra.sigs||[], corr:extra.corr||null,
+    prev: prevEv ? prevEv.hash : 'GENESIS:' + exp.id, app:APP_VERSION
+  };
+  ev.hash = eventHash(ev);
+  exp.events.push(ev);
+  await saveExp(exp);
+  return ev;
+}
+
+/* ---------- exportar / importar ---------- */
+function exportPayload(list){
+  const clean = e => ({id:e.id, created:e.created, createdBy:e.createdBy, events:e.events});
+  return {format:FORMAT, version:1, app:APP_VERSION, exported:new Date().toISOString(), by:{name:PROFILE.name, empresa:PROFILE.empresa, rol:PROFILE.rol, dev:DEV}, exps:list.map(clean)};
+}
+async function shareExport(list, baseName){
+  const txt = JSON.stringify(exportPayload(list));
+  const stamp = new Date().toISOString().slice(0,16).replace(/[-:T]/g,'');
+  const name = `${baseName}_${PROFILE.rol}_${stamp}`.replace(/[^\w.-]+/g,'_');
+  if (window.AndroidBridge){
+    AndroidBridge.shareFile(name + '.json', txt, 'Expediente de descargo AT. Ábrelo con la app Descargos AT → Importar.');
+    markExported(list); return;
+  }
+  const fileTxt = new File([txt], name + '.txt', {type:'text/plain'});
+  try {
+    if (navigator.canShare && navigator.canShare({files:[fileTxt]})) {
+      await navigator.share({files:[fileTxt], title:baseName, text:'Expediente de descargo AT. Ábrelo con la app Descargos AT → Importar.'});
+      markExported(list); return;
+    }
+  } catch(e){ if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], {type:'application/json'}));
+  a.download = name + '.json'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  markExported(list); toast('Fichero descargado. Envíalo a las otras empresas.');
+}
+function markExported(list){ const m = ls('dat.exported') || {}; list.forEach(x => m[x.id] = x.events.filter(e => e.dev===DEV).length); ls('dat.exported', m); }
+function unsent(exp){ const m = ls('dat.exported') || {}; return exp.events.filter(e => e.dev===DEV).length - (m[exp.id]||0); }
+
+async function importFiles(files){
+  let added=0, rejected=0, newExps=0, touched=new Set();
+  for (const f of files){
+    let obj; try { obj = JSON.parse(await f.text()); } catch(e){ toast(`${f.name}: no es un expediente válido`); continue; }
+    if (!obj || obj.format !== FORMAT || !Array.isArray(obj.exps)) { toast(`${f.name}: formato no reconocido`); continue; }
+    for (const inc of obj.exps){
+      if (!inc || !inc.id || !Array.isArray(inc.events)) continue;
+      let exp = EXPS.get(inc.id);
+      if (!exp){ exp = {id:inc.id, created:inc.created, createdBy:inc.createdBy, events:[]}; newExps++; }
+      const have = new Set(exp.events.map(e => e.id));
+      for (const e of inc.events){
+        if (have.has(e.id)) continue;
+        if (!e || e.exp !== inc.id || eventHash(e) !== e.hash){ rejected++; continue; }
+        exp.events.push(e); have.add(e.id); added++;
+      }
+      touched.add(exp.id); await saveExp(exp);
+    }
+  }
+  const msg = `Importado: ${added} registros nuevos` + (newExps ? `, ${newExps} expediente(s) nuevo(s)` : '') + (rejected ? `. ${rejected} registro(s) RECHAZADOS por no superar la verificación de integridad.` : '.');
+  toast(msg, 6000);
+  if (touched.size === 1) go('#/exp/' + [...touched][0]); else render();
+}
+
+/* ---------- fotos, firmas, GPS ---------- */
+function compressPhoto(file, stampLines){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 1280, sc = Math.min(1, max / Math.max(img.width, img.height));
+      const w = Math.round(img.width*sc), h = Math.round(img.height*sc);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d'); x.drawImage(img, 0, 0, w, h);
+      const fs = Math.max(14, Math.round(w/48)), bh = fs*1.35*stampLines.length + fs*0.6;
+      x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(0, h-bh, w, bh);
+      x.fillStyle = '#fff'; x.font = `${fs}px sans-serif`;
+      stampLines.forEach((t,i) => x.fillText(t, fs*0.5, h - bh + fs*1.25*(i+1)));
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.72));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('imagen')); };
+    img.src = url;
+  });
+}
+function sigPad(canvas){
+  const ctx = canvas.getContext('2d'); let drawing=false, dirty=false, lastP=null;
+  const fit = () => { const r = canvas.getBoundingClientRect(); const d = window.devicePixelRatio||1;
+    const data = dirty ? canvas.toDataURL() : null;
+    canvas.width = r.width*d; canvas.height = r.height*d; ctx.scale(d,d); ctx.lineWidth = 2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#10243a';
+    if (data){ const im = new Image(); im.onload = () => ctx.drawImage(im,0,0,r.width,r.height); im.src = data; } };
+  const pos = e => { const r = canvas.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; };
+  canvas.addEventListener('pointerdown', e => { drawing=true; lastP=pos(e); canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', e => { if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(lastP.x,lastP.y); ctx.lineTo(p.x,p.y); ctx.stroke(); lastP=p; dirty=true; });
+  const up = () => { drawing=false; };
+  canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+  requestAnimationFrame(fit);
+  return { clear(){ ctx.clearRect(0,0,canvas.width,canvas.height); dirty=false; }, isEmpty:()=>!dirty,
+    data(){ // recorte a 600 px de ancho para reducir tamaño
+      const o = document.createElement('canvas'); o.width = 600; o.height = Math.round(600*canvas.height/canvas.width);
+      const ox = o.getContext('2d'); ox.fillStyle='#fff'; ox.fillRect(0,0,o.width,o.height); ox.drawImage(canvas,0,0,o.width,o.height); return o.toDataURL('image/png'); } };
+}
+function getGPS(){
+  return new Promise(res => {
+    if (!navigator.geolocation) return res({err:'El dispositivo no ofrece ubicación'});
+    navigator.geolocation.getCurrentPosition(
+      p => res({lat:+p.coords.latitude.toFixed(6), lon:+p.coords.longitude.toFixed(6), acc:Math.round(p.coords.accuracy), ts:new Date(p.timestamp).toISOString()}),
+      e => res({err: e.code===1 ? 'Permiso de ubicación denegado' : 'No se pudo obtener la ubicación'}),
+      {enableHighAccuracy:true, timeout:20000, maximumAge:30000});
+  });
+}
+
+/* ---------- navegación ---------- */
+const go = h => { if (location.hash === h) render(); else location.hash = h; };
+window.addEventListener('hashchange', () => render());
+function bar(title, back, actions=''){
+  $('#bar').innerHTML = (back ? `<button class="ic" aria-label="Volver" onclick="history.length>1?history.back():go('#/')">←</button>` : `<span class="ic" aria-hidden="true">⚡</span>`) +
+    `<h1>${esc(title)}</h1>${actions}`;
+}
+
+function render(){
+  window.scrollTo(0,0);
+  if (!PROFILE) return viewProfile(true);
+  const parts = location.hash.replace(/^#\/?/,'').split('/');
+  const [v, a, b] = parts;
+  if (v === 'exp' && EXPS.get(a)) return viewExp(EXPS.get(a));
+  if (v === 'step' && EXPS.get(a) && STEP[b]) return viewStep(EXPS.get(a), STEP[b], parts[3]==='corr');
+  if (v === 'ev' && EXPS.get(a)) return viewEvent(EXPS.get(a), b);
+  if (v === 'report' && EXPS.get(a)) return viewReport(EXPS.get(a));
+  if (v === 'integ' && EXPS.get(a)) return viewInteg(EXPS.get(a));
+  if (v === 'settings') return viewProfile(false);
+  if (v === 'help') return viewHelp();
+  return viewHome();
+}
+
+/* ---------- vistas ---------- */
+function roleChip(r){ return `<span class="chip ${r||'X'}">${esc({D:'Distribuidora',G:'Gestora',I:'Instaladora'}[r]||'—')}</span>`; }
+
+function viewHome(){
+  bar('Descargos AT', false, `<button onclick="go('#/help')">Ayuda</button><button onclick="go('#/settings')">Perfil</button>`);
+  const list = [...EXPS.values()].sort((a,b) => (b.updated||'') > (a.updated||'') ? 1 : -1);
+  const canCreate = STEP.F01.role.includes(PROFILE.rol);
+  let h = `<div class="card"><div class="row"><div class="grow"><b>${esc(PROFILE.name)}</b><div class="muted small">${esc(PROFILE.fig)} · ${esc(PROFILE.empresa)}</div></div>${roleChip(PROFILE.rol)}</div></div>`;
+  h += `<div class="row" style="margin-bottom:12px"><button class="btn grow" onclick="$('#importFile').click()">⬇ Importar expediente</button>` +
+       (list.length ? `<button class="btn grow" onclick="shareExport([...EXPS.values()],'Copia_descargos')">⬆ Copia de todo</button>` : '') + `</div>`;
+  if (!list.length) h += `<div class="card"><h2>Sin expedientes</h2><p class="muted">${canCreate ? 'Crea un descargo con el botón «Nuevo descargo» o importa' : 'Importa'} el fichero que te envíe otra empresa (WhatsApp, correo…).</p></div>`;
+  for (const exp of list){
+    const st = status(exp), u = unsent(exp);
+    h += `<div class="card list-exp" onclick="go('#/exp/${exp.id}')"><div class="row"><div class="grow"><b>${esc(expTitle(exp))}</b><div class="muted small">${esc((expInst(exp)||'').slice(0,90))}</div></div></div>
+      <div class="banner ${st.c}" style="margin:10px 0 0;padding:8px 10px;font-size:14px">${esc(st.t)}</div>
+      <div class="muted small" style="margin-top:6px">${exp.events.length} registros · actualizado ${fmtDT(exp.updated)}${u>0?` · <b style="color:var(--danger)">${u} sin compartir</b>`:''}</div></div>`;
+  }
+  $('#app').innerHTML = h + (canCreate ? `<button class="btn pri fab" onclick="newExp()">＋ Nuevo descargo</button>` : '');
+}
+async function newExp(){
+  const exp = {id:uuid(), created:new Date().toISOString(), createdBy:{name:PROFILE.name, empresa:PROFILE.empresa, rol:PROFILE.rol}, events:[]};
+  await saveExp(exp); go(`#/step/${exp.id}/F01`);
+}
+
+function viewExp(exp){
+  bar(expTitle(exp), true, `<button onclick="go('#/report/${exp.id}')">Informe</button>`);
+  const st = status(exp), u = unsent(exp);
+  let h = `<div class="banner ${st.c}">${esc(st.t)}<div class="sub">${esc(st.s)}</div></div>`;
+  h += `<div class="card"><div class="kv"><div>Instalación</div><div>${esc(expInst(exp))||'—'}</div>`;
+  const f1 = last(exp,'F01'), a = last(exp,'F03A');
+  if (f1) h += `<div>Tensión</div><div>${esc(f1.data.tension)} kV · ${esc(f1.data.tipo)}</div><div>Instaladora</div><div>${esc(f1.data.instaladora)}</div>`;
+  if (a) h += `<div>Autorizado</div><div>${fmtD(a.data.fecha)} · ${esc(a.data.h_ini)}–${esc(a.data.h_fin)}</div><div>AD</div><div>${esc(a.data.ad)}</div>`;
+  h += `</div><div class="row" style="margin-top:12px"><button class="btn pri grow" onclick="shareExport([EXPS.get('${exp.id}')],'${esc((expNum(exp)||'Descargo').replace(/'/g,''))}')">⬆ Compartir expediente${u>0?` (${u} nuevos)`:''}</button><button class="btn" onclick="$('#importFile').click()">⬇ Importar</button></div>
+     <p class="muted small" style="margin:8px 0 0">Comparte tras cada registro importante para que las otras empresas lo vean. Al importar, los registros se fusionan y se verifica su integridad.</p></div>`;
+  for (const ph of PHASES){
+    h += `<div class="phase">${ph}</div>`;
+    for (const s of STEPS.filter(x => x.phase === ph)) h += stepCard(exp, s);
+  }
+  h += `<div class="row" style="margin-top:16px"><button class="btn grow" onclick="go('#/integ/${exp.id}')">🔒 Verificar integridad</button><button class="btn grow" onclick="go('#/report/${exp.id}')">📄 Informe / PDF</button></div>
+        <div style="margin-top:24px"><button class="btn ghost full" style="color:var(--danger)" onclick="delExp('${exp.id}')">Eliminar este expediente del dispositivo</button></div>`;
+  $('#app').innerHTML = h;
+}
+function stepCard(exp, s){
+  const list = evs(exp, s.id), l = list[list.length-1], miss = missing(exp, s);
+  const done = s.id==='MAN' ? manStatus(exp).ok : !!l && (s.repeatable ? false : true);
+  const avail = !miss.length;
+  let cls = done ? 'done' : (avail ? 'avail' : 'blocked'), meta = '';
+  if (s.id === 'MAN'){ const m = manStatus(exp); meta = m.total ? `${m.n} de ${m.total} maniobras del programa ejecutadas` : 'Programa pendiente (F-03)'; }
+  else if (s.repeatable) meta = list.length ? `${list.length} registrado(s) · último ${fmtDT(l.ts)}` : 'Ninguno registrado';
+  else if (l) meta = `${esc(l.author.name)} · ${fmtDT(l.ts)}${list.length>1?` · ${list.length} versiones`:''}`;
+  else if (miss.length) meta = (s.blockedMsg && s.id==='F06B') ? `<b style="color:var(--danger)">${esc(s.blockedMsg)}</b>` : 'Pendiente de: ' + miss.map(m => STEP[m].title).join(', ');
+  else meta = canRole(s) ? 'Disponible para registrar' : 'Lo registra: ' + s.role.map(r => ROLES[r]).join(' o ');
+  if (s.id==='F02V' && l && l.data.resultado==='Rechazada') meta += ' · <b style="color:var(--danger)">RECHAZADA</b>';
+  if (s.id==='F03A' && l && l.data.resolucion==='Denegado') meta += ' · <b style="color:var(--danger)">DENEGADO</b>';
+  const icon = done ? '✓' : (avail ? '•' : '🔒');
+  return `<div class="step ${cls}" onclick="stepClick('${exp.id}','${s.id}')"><div class="st">${icon}</div><div class="grow">
+    <div class="tt">${esc(s.title)}</div><div class="meta"><span class="chip ${s.role.length>1?'X':s.role[0]}" style="font-size:11px;padding:2px 6px">${esc(s.ficha)}</span> ${meta}</div></div></div>`;
+}
+function stepClick(eid, sid){
+  const exp = EXPS.get(eid), s = STEP[sid], list = evs(exp, sid);
+  if (list.length && !s.repeatable) return go(`#/ev/${eid}/${list[list.length-1].id}`);
+  if (s.repeatable && list.length) return go(`#/ev/${eid}/list:${sid}`);
+  go(`#/step/${eid}/${sid}`);
+}
+async function delExp(id){
+  const exp = EXPS.get(id);
+  if (unsent(exp) > 0 && !confirm('Hay registros de este dispositivo sin compartir. Si eliminas el expediente se perderán. ¿Continuar?')) return;
+  if (!confirm('¿Eliminar el expediente de este dispositivo? Las copias de las otras empresas no se ven afectadas.')) return;
+  await DB.del(id); EXPS.delete(id); go('#/');
+}
+
+/* ----- ver registro(s) ----- */
+function viewEvent(exp, key){
+  if (key.startsWith('list:')){
+    const s = STEP[key.slice(5)], list = evs(exp, s.id).reverse();
+    bar(s.title, true);
+    let h = '';
+    const miss = missing(exp, s);
+    if (!miss.length && canRole(s)) h += `<button class="btn pri full" style="margin-bottom:12px" onclick="go('#/step/${exp.id}/${s.id}')">＋ Registrar ${esc(s.title.toLowerCase())}</button>`;
+    else if (!canRole(s)) h += `<div class="infobox">Lo registra: ${s.role.map(r=>ROLES[r]).join(' o ')}.</div>`;
+    if (s.id==='MAN'){ const m=manStatus(exp); h += `<div class="card"><b>${m.n} de ${m.total}</b> maniobras del programa ejecutadas.</div>`; }
+    for (const e of list) h += `<div class="card" style="cursor:pointer" onclick="go('#/ev/${exp.id}/${e.id}')"><b>${esc(eventSummary(exp,e))}</b><div class="muted small">${esc(e.author.name)} · ${roleChip(e.author.rol)} · ${fmtDT(e.ts)}</div></div>`;
+    $('#app').innerHTML = h; return;
+  }
+  const e = exp.events.find(x => x.id === key); if (!e) return go('#/exp/'+exp.id);
+  const s = STEP[e.step], all = evs(exp, e.step), isLast = all[all.length-1].id === e.id;
+  bar(s.title, true);
+  let h = `<div class="card"><div class="row"><span class="chip ${e.author.rol}">${esc(s.ficha)}</span><b class="grow">${esc(s.title)}</b></div>
+    <div class="muted small" style="margin-top:6px">Registrado por ${esc(e.author.name)} (${esc(e.author.fig)}, ${esc(e.author.empresa)}) el ${fmtDT(e.ts)}</div>
+    ${e.corr ? `<div class="infobox small"><b>Corrección.</b> Motivo: ${esc(e.corr)}</div>` : ''}
+    ${!isLast && !s.repeatable ? `<div class="warnbox small">Esta versión fue sustituida por una corrección posterior.</div>` : ''}
+    ${renderData(exp, s, e)}</div>`;
+  if (!s.repeatable && isLast && canRole(s)) h += `<button class="btn full" onclick="go('#/step/${exp.id}/${s.id}/corr')">Registrar corrección</button>`;
+  if (all.length > 1 && !s.repeatable) h += `<div class="card"><h3>Versiones</h3>${all.map((x,i)=>`<div><a href="#/ev/${exp.id}/${x.id}">Versión ${i+1}</a> · ${esc(x.author.name)} · ${fmtDT(x.ts)}</div>`).join('')}</div>`;
+  $('#app').innerHTML = h;
+}
+function eventSummary(exp, e){
+  const d = e.data;
+  if (e.step==='MAN'){ const p = program(exp)[d.fila]; return `${d.hora} · ${p ? `${Number(d.fila)+1}. ${p.aparato} · ${p.maniobra}` : 'Maniobra'} · ${d.resultado}`; }
+  if (e.step==='INC') return `${d.hora} · ${d.tipo}`;
+  if (e.step==='COM') return `${d.hora} · ${d.de} → ${d.a}: ${String(d.mensaje).slice(0,60)}`;
+  return STEP[e.step].title;
+}
+function fmtVal(f, v, exp){
+  if (f.t==='yn' || f.t==='sel' || f.t==='text' || f.t==='num' || f.t==='now' || f.t==='time') return esc(v);
+  if (f.t==='date') return esc(fmtD(v));
+  if (f.t==='area') return esc(v).replace(/\n/g,'<br>');
+  if (f.t==='chk' || f.t==='decl') return v ? '✔ Sí' : '✘ No';
+  if (f.t==='prog'){ const p = program(exp)[v]; return p ? esc(`${Number(v)+1}. ${p.aparato} · ${p.maniobra} (regla ${p.regla})`) : esc(v); }
+  return esc(v);
+}
+function renderData(exp, s, e){
+  let h = '<div class="kv" style="margin-top:10px">';
+  for (const f of s.fields){
+    const v = e.data[f.k];
+    if (f.t==='table'){
+      h += `</div><h3>${esc(f.l)}</h3><table class="t"><tr>${f.cols.map(c=>`<th>${esc(c.l)}</th>`).join('')}</tr>` +
+        (v||[]).map(r => `<tr>${f.cols.map(c => `<td>${c.t==='chk' ? (r[c.k]?'✔':'✘') : esc(c.t==='date'?fmtD(r[c.k]):r[c.k])}</td>`).join('')}</tr>`).join('') + `</table><div class="kv" style="margin-top:10px">`;
+    } else if (f.t==='chks'){
+      h += `</div><h3>${esc(f.l)}</h3>${f.opts.map(o => `<div>${(v||[]).includes(o)?'✔':'✘'} ${esc(o)}</div>`).join('')}<div class="kv" style="margin-top:10px">`;
+    } else if (f.t==='decl'){
+      h += `</div><div class="decl"><b>${esc(f.l)}:</b> «${esc(f.text)}» — ${v?'<b>Aceptada</b>':'No aceptada'}</div><div class="kv">`;
+    } else if (v !== undefined && v !== '' && v !== null) h += `<div>${esc(f.l)}</div><div>${fmtVal(f, v, exp)}</div>`;
+  }
+  h += '</div>';
+  if (e.gps) h += `<div class="gps">📍 ${e.gps.err ? esc(e.gps.err) : `${e.gps.lat}, ${e.gps.lon} (±${e.gps.acc} m) · <a href="https://maps.google.com/?q=${e.gps.lat},${e.gps.lon}" target="_blank" rel="noopener">ver en mapa</a>`}</div>`;
+  if (e.photos && e.photos.length) h += `<h3>Fotos</h3><div class="photos">${e.photos.map(p=>`<img src="${p}" alt="Foto del registro" style="cursor:zoom-in" onclick="viewImg(this.src)">`).join('')}</div>`;
+  if (e.sigs && e.sigs.length) h += `<h3>Firmas</h3><div class="photos">${e.sigs.map(g=>`<div style="width:180px;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px"><img src="${g.img}" style="width:100%;height:60px;object-fit:contain;border:0"><div><b>${esc(g.label)}</b></div><div>${esc(g.name)}${g.dni?' · '+esc(g.dni):''}</div></div>`).join('')}</div>`;
+  h += `<div class="hash" style="margin-top:10px">Sello SHA-256: ${e.hash}</div>`;
+  return h;
+}
+
+/* ----- formulario de registro ----- */
+let FORM = null;
+function viewStep(exp, s, corr){
+  bar((corr?'Corrección · ':'') + s.title, true);
+  const miss = missing(exp, s);
+  if (miss.length){
+    $('#app').innerHTML = `<div class="warnbox">${esc(s.blockedMsg || 'No se puede registrar todavía.')}</div><div class="card">Falta: <ul>${miss.map(m=>`<li>${esc(STEP[m].title)} (${STEP[m].ficha})</li>`).join('')}</ul></div>`;
+    return;
+  }
+  if (!canRole(s)){ $('#app').innerHTML = `<div class="warnbox">Este registro lo hace: ${s.role.map(r=>ROLES[r]).join(' o ')}.</div><p class="muted">Tu perfil es ${esc(ROLES[PROFILE.rol])}. Si es un error, cambia el perfil.</p>`; return; }
+  const prev = corr ? last(exp, s.id) : null;
+  FORM = {exp, s, photos:[], pads:[], gps:null, corr};
+  let h = '';
+  if (s.help) h += `<div class="infobox small">${esc(s.help)}</div>`;
+  if (['F04A','RIAUT','MAN','F04','F05A','F05C','F06A','F06B'].includes(s.id)) h += `<div class="warnbox small">La app solo deja constancia. No sustituye la verificación de ausencia de tensión ni las cinco reglas.</div>`;
+  h += `<div class="card"><div class="muted small">${esc(s.ficha)} · ${esc(expTitle(exp))}</div>`;
+  if (corr) h += fieldHTML({k:'__corr',t:'area',l:'Motivo de la corrección',req:1}, '');
+  for (const f of s.fields){
+    let v = prev ? prev.data[f.k] : undefined;
+    if (v === undefined && f.from){ const src = last(exp, f.from[0]); if (src) v = src.data[f.from[1]]; }
+    if (v === undefined && f.self) v = `${PROFILE.name}, ${PROFILE.empresa}`;
+    if (f.t==='table' && v === undefined){
+      if (f.fixedFrom){ const src = last(exp, f.fixedFrom[0]); v = src ? (src.data[f.fixedFrom[1]]||[]).map(r=>({ubicacion:r.ubicacion})) : []; }
+      else v = f.def ? JSON.parse(JSON.stringify(f.def)) : [];
+      while (!f.fixed && !f.fixedFrom && v.length < (f.rows||1)) v.push({});
+    }
+    h += fieldHTML(f, v, exp);
+  }
+  h += `</div>`;
+  if (s.gps) h += `<div class="gps" id="gpsBox">📍 Obteniendo ubicación…</div>`;
+  if (s.photos) h += `<div class="card"><h2>Fotos${s.photos.min?' <span style="color:var(--danger)">*</span>':''}</h2><p class="muted small">${esc(s.photos.hint)}. Se añaden fecha, hora, ubicación y nº de descargo sobre la imagen.</p>
+     <label class="btn full">📷 Hacer / añadir foto<input type="file" accept="image/*" capture="environment" multiple hidden onchange="addPhotos(this)"></label><div class="photos" id="photos"></div></div>`;
+  if (s.signers.length){
+    h += `<div class="card"><h2>Firmas</h2>`;
+    s.signers.forEach((g,i) => {
+      const nm = i===0 ? PROFILE.name : '', dni = i===0 ? (PROFILE.dni||'') : '';
+      h += `<div class="sig"><div class="row"><b class="grow">${esc(g.l)}${g.req?' <span style="color:var(--danger)">*</span>':' <span class="muted small">(opcional)</span>'}</b><button class="btn ghost" style="min-height:36px;padding:4px 10px" onclick="FORM.pads[${i}].clear()">Borrar</button></div>
+        <div class="row" style="margin:6px 0"><input type="text" id="sgn${i}" placeholder="Nombre y apellidos" value="${esc(nm)}" class="grow" style="flex:2"><input type="text" id="sgd${i}" placeholder="DNI" value="${esc(dni)}" style="flex:1;min-width:100px"></div>
+        <canvas id="sgc${i}" aria-label="Zona de firma"></canvas></div>`;
+    });
+    h += `</div>`;
+  }
+  h += `<div class="sticky-foot"><button class="btn pri full" id="saveBtn" onclick="submitStep()">Registrar y sellar</button></div>`;
+  $('#app').innerHTML = h;
+  s.signers.forEach((g,i) => FORM.pads[i] = sigPad($('#sgc'+i)));
+  if (s.gps) getGPS().then(g => { FORM.gps = g; const b = $('#gpsBox'); if (b) b.innerHTML = g.err ? `📍 ${esc(g.err)}. Se registrará sin ubicación.` : `📍 ${g.lat}, ${g.lon} (±${g.acc} m)`; });
+}
+function fieldHTML(f, v, exp){
+  const id = 'f_' + f.k, rq = f.req ? ' <span class="req">*</span>' : '';
+  switch (f.t){
+    case 'text': case 'num': case 'date': case 'time':
+      return `<label class="f" for="${id}">${esc(f.l)}${rq}</label><input id="${id}" data-k="${f.k}" type="${f.t==='num'?'number':f.t}" ${f.t==='num'?'inputmode="decimal" step="any"':''} value="${esc(v??'')}">`;
+    case 'now':
+      return `<label class="f" for="${id}">${esc(f.l)}${rq}</label><div class="row"><input id="${id}" data-k="${f.k}" type="time" value="${esc(v||nowHM())}" class="grow"><button class="btn" type="button" onclick="$('#${id}').value=nowHM()">Ahora</button></div>`;
+    case 'area':
+      return `<label class="f" for="${id}">${esc(f.l)}${rq}</label><textarea id="${id}" data-k="${f.k}">${esc(v??'')}</textarea>`;
+    case 'sel':
+      return `<label class="f" for="${id}">${esc(f.l)}${rq}</label><select id="${id}" data-k="${f.k}"><option value="">— Selecciona —</option>${f.opts.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+    case 'prog': {
+      const prog = program(exp), done = new Set(evs(exp,'MAN').filter(e=>(e.data.resultado||'').startsWith('Ejecutada')).map(e=>String(e.data.fila)));
+      const next = prog.findIndex((_,i)=>!done.has(String(i)));
+      return `<label class="f" for="${id}">${esc(f.l)}${rq}</label><select id="${id}" data-k="${f.k}"><option value="">— Selecciona —</option>${prog.map((p,i)=>`<option value="${i}" ${i===next?'selected':''}>${done.has(String(i))?'✔ ':''}${i+1}. ${esc(p.aparato)} · ${esc(p.maniobra)} (regla ${esc(p.regla)})</option>`).join('')}</select>` +
+        (next>0 ? '' : '') + `<div class="muted small" style="margin-top:4px">Sigue el orden del programa.</div>`;
+    }
+    case 'yn':
+      return `<label class="f">${esc(f.l)}${rq}</label><div class="yn" data-k="${f.k}" data-t="yn">${['Sí','No'].map(o=>`<label><input type="radio" name="${id}" value="${o}" ${v===o?'checked':''}> ${o}</label>`).join('')}</div>`;
+    case 'chk':
+      return `<label class="chk"><input type="checkbox" data-k="${f.k}" ${v?'checked':''}><span>${esc(f.l)}${rq}</span></label>`;
+    case 'chks':
+      return `<label class="f">${esc(f.l)}${f.all?' <span class="req">*</span>':''}</label><div data-k="${f.k}" data-t="chks">${f.opts.map(o=>`<label class="chk"><input type="checkbox" value="${esc(o)}" ${(v||[]).includes(o)?'checked':''}><span>${esc(o)}</span></label>`).join('')}</div>`;
+    case 'decl':
+      return `<div class="decl"><b>${esc(f.l)}</b><p style="margin:6px 0">«${esc(f.text)}»</p><label class="chk" style="margin:0"><input type="checkbox" data-k="${f.k}" ${v?'checked':''}><span>Acepto la declaración <span class="req">*</span></span></label></div>`;
+    case 'table':
+      return `<label class="f">${esc(f.l)}${f.min?' <span class="req">*</span>':''}</label><div class="tbl" data-k="${f.k}" data-t="table">${(v||[]).map((r,i)=>tableRow(f,r,i)).join('')}</div>` +
+        (f.fixed||f.fixedFrom ? '' : `<button class="btn" type="button" onclick="addRow('${f.k}')">＋ Añadir fila</button>`);
+  }
+  return '';
+}
+function tableRow(f, r, i){
+  const fixed = f.fixed || f.fixedFrom;
+  return `<div class="tr"><div class="hd"><span>Fila ${i+1}</span>${fixed?'':`<button class="btn ghost" type="button" style="min-height:30px;padding:2px 8px" onclick="this.closest('.tr').remove()">Quitar</button>`}</div>` +
+    `<div class="inline-chk">${f.cols.filter(c=>c.t==='chk').map(c=>`<label><input type="checkbox" data-c="${c.k}" ${r[c.k]?'checked':''}>${esc(c.l)}</label>`).join('')}</div>` +
+    f.cols.filter(c=>c.t!=='chk').map(c => {
+      const val = esc(r[c.k]??'');
+      if (c.ro) return `<div class="cell"><b>${val}</b><input type="hidden" data-c="${c.k}" value="${val}"></div>`;
+      if (c.t==='sel') return `<div class="cell"><small>${esc(c.l)}</small><select data-c="${c.k}"><option value="">—</option>${c.opts.map(o=>`<option ${String(r[c.k])===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+      if (c.t==='time') return `<div class="cell"><small>${esc(c.l)}</small><div class="row"><input type="time" data-c="${c.k}" value="${val}" class="grow"><button class="btn" type="button" onclick="this.previousElementSibling.value=nowHM()">Ahora</button></div></div>`;
+      return `<div class="cell"><small>${esc(c.l)}</small><input type="${c.t==='date'?'date':'text'}" data-c="${c.k}" value="${val}"></div>`;
+    }).join('') + `</div>`;
+}
+function addRow(k){
+  const f = FORM.s.fields.find(x=>x.k===k), box = document.querySelector(`[data-k="${k}"][data-t="table"]`);
+  box.insertAdjacentHTML('beforeend', tableRow(f, {}, box.children.length));
+}
+async function addPhotos(inp){
+  const exp = FORM.exp, g = FORM.gps;
+  const lines = [`${expTitle(exp)} · ${FORM.s.ficha} ${FORM.s.title}`, `${fmtDT(new Date().toISOString())} · ${PROFILE.name} (${PROFILE.empresa})`];
+  if (g && !g.err) lines.push(`GPS ${g.lat}, ${g.lon} ±${g.acc} m`);
+  for (const f of inp.files){ try { FORM.photos.push(await compressPhoto(f, lines)); } catch(e){ toast('No se pudo leer una imagen'); } }
+  inp.value = ''; drawPhotos();
+}
+function drawPhotos(){ $('#photos').innerHTML = FORM.photos.map((p,i)=>`<div class="ph"><img src="${p}" alt="Foto ${i+1}"><button type="button" aria-label="Quitar foto" onclick="FORM.photos.splice(${i},1);drawPhotos()">×</button></div>`).join(''); }
+
+function collect(){
+  const d = {}, errs = [], s = FORM.s;
+  for (const f of s.fields){
+    let v;
+    if (f.t==='yn'){ const r = document.querySelector(`[data-k="${f.k}"][data-t="yn"] input:checked`); v = r ? r.value : ''; }
+    else if (f.t==='chks'){ v = [...document.querySelectorAll(`[data-k="${f.k}"][data-t="chks"] input:checked`)].map(x=>x.value); if (f.all && v.length < f.opts.length) errs.push(`«${f.l}»: deben estar marcadas todas. Si alguna no se cumple, NO continúes: registra una incidencia.`); }
+    else if (f.t==='chk' || f.t==='decl'){ v = document.querySelector(`[data-k="${f.k}"]`).checked; if ((f.req || f.t==='decl') && !v) errs.push(`Falta confirmar: ${f.l}`); d[f.k]=v; continue; }
+    else if (f.t==='table'){
+      v = [...document.querySelectorAll(`[data-k="${f.k}"][data-t="table"] .tr`)].map(tr => { const r = {}; tr.querySelectorAll('[data-c]').forEach(inp => r[inp.dataset.c] = inp.type==='checkbox' ? inp.checked : inp.value.trim()); return r; })
+        .filter(r => f.fixed || f.fixedFrom || f.cols.some(c => c.t!=='chk' && r[c.k]));
+      if ((f.min||0) > v.length) errs.push(`«${f.l}»: añade al menos ${f.min} fila(s).`);
+      v.forEach((r,i) => f.cols.forEach(c => { if (c.req && !r[c.k]) errs.push(`«${f.l}», fila ${i+1}: falta ${c.l}.`); }));
+      if (f.allChecks) v.forEach((r,i) => { if (f.cols.filter(c=>c.t==='chk' && c.k!=='visible').some(c=>!r[c.k])) errs.push(`«${f.l}», fila ${i+1}: faltan comprobaciones.`); });
+    }
+    else { const el = document.querySelector(`[data-k="${f.k}"]`); v = el ? el.value.trim() : ''; }
+    if (f.req && (v === '' || v === undefined)) errs.push(`Falta: ${f.l}`);
+    d[f.k] = v;
+  }
+  if (s.validate){ const m = s.validate(d); if (m) errs.push(m); }
+  let corr = null;
+  if (FORM.corr){ corr = ($('#f___corr')||{}).value?.trim(); if (!corr) errs.push('Indica el motivo de la corrección.'); }
+  if (s.photos && s.photos.min && FORM.photos.length < s.photos.min) errs.push(`Añade al menos ${s.photos.min} foto.`);
+  const sigs = [];
+  s.signers.forEach((g,i) => {
+    const name = $('#sgn'+i).value.trim(), dni = $('#sgd'+i).value.trim(), empty = FORM.pads[i].isEmpty();
+    if (g.req && (!name || empty)) errs.push(`Falta la firma y el nombre de: ${g.l}`);
+    if (!empty && name) sigs.push({fig:g.fig, label:g.l, name, dni, img:FORM.pads[i].data()});
+    else if (!empty && !name) errs.push(`Escribe el nombre de quien firma como: ${g.l}`);
+  });
+  return {d, errs, sigs, corr};
+}
+async function submitStep(){
+  const {d, errs, sigs, corr} = collect();
+  document.querySelectorAll('.warnbox.form-err').forEach(x=>x.remove());
+  if (errs.length){
+    $('#app').insertAdjacentHTML('afterbegin', `<div class="warnbox form-err"><div>No se ha registrado:</div><ul style="margin:6px 0 0 18px;padding:0">${errs.map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`);
+    window.scrollTo(0,0); return;
+  }
+  const btn = $('#saveBtn'); btn.disabled = true; btn.textContent = 'Sellando…';
+  if (FORM.s.gps && !FORM.gps) FORM.gps = await Promise.race([getGPS(), new Promise(r=>setTimeout(()=>r({err:'Tiempo de espera de ubicación agotado'}),8000))]);
+  const ev = await addEvent(FORM.exp, FORM.s.id, d, {gps:FORM.s.gps?FORM.gps:null, photos:FORM.photos, sigs, corr});
+  const expId = FORM.exp.id; FORM = null;
+  toast('Registrado y sellado. Recuerda compartir el expediente.');
+  history.replaceState(null, '', `#/exp/${expId}`); render();
+}
+
+/* ----- integridad ----- */
+function viewInteg(exp){
+  bar('Integridad', true);
+  const r = verify(exp);
+  let h = r.ok ? `<div class="okbox"><b>✔ Integridad verificada.</b> Los ${r.n} registros conservan su sello y las cadenas de cada dispositivo están completas.</div>`
+               : `<div class="warnbox">⚠ Hay incidencias de integridad. Revisa el detalle.</div>`;
+  if (r.bad.length) h += `<div class="warnbox">${r.bad.length} registro(s) modificados después de sellarse: ${r.bad.map(e=>esc(STEP[e.step]?.title||e.step)+' ('+fmtDT(e.ts)+')').join(', ')}</div>`;
+  h += `<div class="card"><h2>Dispositivos que han registrado</h2>${r.devices.map(d=>`<div style="margin:8px 0"><b>${esc(d.who)}</b> · ${d.n} registros<div class="hash">${esc(d.dev)}</div>${d.issues.map(i=>`<div class="small" style="color:var(--danger)">${esc(i)}</div>`).join('')}</div>`).join('')}</div>
+    <div class="card"><h2>Huella del expediente</h2><p class="muted small">Si dos empresas tienen la misma huella, tienen exactamente los mismos registros.</p><div class="hash" style="font-size:13px">${r.fp}</div></div>
+    <div class="card small muted">Cada registro se sella con SHA-256 sobre todo su contenido (datos, fotos, firmas, ubicación y hora) y se encadena con el anterior del mismo dispositivo. Cualquier cambio posterior rompe el sello y el registro se rechaza al importarlo. Un «registro que falta» suele significar que ese dispositivo aún no ha compartido su último fichero.</div>`;
+  $('#app').innerHTML = h;
+}
+
+/* ----- informe imprimible ----- */
+function viewReport(exp){
+  bar('Informe', true, `<button onclick="doPrint()">Imprimir / PDF</button>`);
+  const r = verify(exp), st = status(exp);
+  let h = `<div class="noprint infobox small">Pulsa «Imprimir / PDF» y elige «Guardar como PDF» para archivarlo o enviarlo.</div><div class="report">
+   <h1>${esc(expTitle(exp))} · Informe de trazabilidad</h1>
+   <div class="kv"><div>Instalación</div><div>${esc(expInst(exp))}</div><div>Estado</div><div><b>${esc(st.t)}</b></div>
+   <div>Integridad</div><div>${r.ok?'✔ Verificada':'⚠ Con incidencias'} · ${r.n} registros · ${r.devices.length} dispositivos</div>
+   <div>Huella</div><div class="hash">${r.fp}</div><div>Generado</div><div>${fmtDT(new Date().toISOString())} por ${esc(PROFILE.name)} (${esc(PROFILE.empresa)})</div></div>`;
+  for (const s of STEPS){
+    const list = evs(exp, s.id); if (!list.length) continue;
+    h += `<h2>${esc(s.ficha)} · ${esc(s.title)}</h2>`;
+    const show = s.repeatable ? list : [list[list.length-1]];
+    for (const e of show){
+      h += `<div class="ev"><div class="small"><b>${s.repeatable?esc(eventSummary(exp,e)):''}</b> Registrado por ${esc(e.author.name)} (${esc(e.author.fig)}, ${esc(e.author.empresa)}) · ${fmtDT(e.ts)}${e.corr?` · Corrección: ${esc(e.corr)}`:''}${!s.repeatable&&list.length>1?` · versión ${list.length} de ${list.length}`:''}</div>` +
+        renderData(exp, s, e).replace('class="photos"','class="pp"') + `</div>`;
+    }
+  }
+  h += `<h2>Cronología completa</h2><table class="t"><tr><th>Fecha y hora</th><th>Registro</th><th>Autor</th><th>Sello</th></tr>` +
+    [...exp.events].sort((a,b)=>a.ts<b.ts?-1:1).map(e=>`<tr><td>${fmtDT(e.ts)}</td><td>${esc(STEP[e.step]?.ficha||'')} ${esc(eventSummary(exp,e))}</td><td>${esc(e.author.name)}<br><span class="muted">${esc(e.author.empresa)}</span></td><td class="hash">${e.hash.slice(0,16)}…</td></tr>`).join('') + `</table>
+    <p class="small muted">Documento generado con Descargos AT ${APP_VERSION}. Los sellos SHA-256 permiten comprobar que ningún registro se ha alterado después de firmarse.</p></div>`;
+  $('#app').innerHTML = h;
+}
+
+/* ----- perfil ----- */
+function viewProfile(first){
+  bar(first ? 'Configurar este teléfono' : 'Perfil', !first);
+  const p = PROFILE || {name:'', dni:'', empresa:'', rol:'', fig:''};
+  $('#app').innerHTML = `${first?`<div class="infobox">Indica quién usa este teléfono. Tu nombre y empresa quedarán en cada registro que hagas.</div>`:''}
+   <div class="card">
+    <label class="f" for="pn">Nombre y apellidos *</label><input id="pn" type="text" value="${esc(p.name)}" autocomplete="name">
+    <label class="f" for="pd">DNI</label><input id="pd" type="text" value="${esc(p.dni)}">
+    <label class="f" for="pe">Empresa (razón social) *</label><input id="pe" type="text" value="${esc(p.empresa)}" autocomplete="organization">
+    <label class="f" for="pr">Tipo de empresa *</label><select id="pr" onchange="figOpts()"><option value="">— Selecciona —</option>${Object.entries(ROLES).map(([k,v])=>`<option value="${k}" ${p.rol===k?'selected':''}>${v}</option>`).join('')}</select>
+    <label class="f" for="pf">Figura *</label><select id="pf"></select>
+   </div>
+   <button class="btn pri full" onclick="saveProfile()">Guardar</button>
+   ${first?'':`<div class="card small muted" style="margin-top:16px">Identificador del dispositivo:<div class="hash">${DEV}</div>Versión ${APP_VERSION}</div>`}`;
+  figOpts(p.fig);
+}
+function figOpts(sel){ const r = $('#pr').value; $('#pf').innerHTML = (FIGS[r]||[]).map(f=>`<option ${f===sel?'selected':''}>${esc(f)}</option>`).join(''); }
+function saveProfile(){
+  const p = {name:$('#pn').value.trim(), dni:$('#pd').value.trim(), empresa:$('#pe').value.trim(), rol:$('#pr').value, fig:$('#pf').value};
+  if (!p.name || !p.empresa || !p.rol || !p.fig) return toast('Completa nombre, empresa, tipo de empresa y figura.');
+  PROFILE = p; ls('dat.profile', p); go('#/');
+}
+
+/* ----- ayuda de campo ----- */
+function viewHelp(){
+  bar('Ayuda y seguridad', true);
+  $('#app').innerHTML = `<div class="help">
+  <div class="card"><h3>Cómo se usa</h3><ol>
+   <li>La gestora crea el descargo (F-01) y comparte el fichero con la distribuidora y la instaladora.</li>
+   <li>Cada empresa importa el fichero, registra sus pasos y vuelve a compartir. Al importar, todo se fusiona.</li>
+   <li>El día D, lo normal es que el AD, el JT y el CG firmen en el mismo teléfono los actos conjuntos (F-04, F-06 A).</li>
+   <li>Al cerrar, la gestora genera el informe PDF y lo archiva con la huella del expediente.</li></ol>
+   <p class="small muted">Los datos se guardan solo en este teléfono. Comparte a menudo: si pierdes el teléfono, lo no compartido se pierde.</p></div>
+  <div class="card"><h3>Cinco reglas (RD 614/2001)</h3><ol><li>Desconectar todas las fuentes.</li><li>Prevenir la realimentación: bloqueo y señalización.</li><li>Verificar la ausencia de tensión (detector comprobado antes y después).</li><li>Poner a tierra y en cortocircuito.</li><li>Proteger frente a elementos próximos en tensión y señalizar la zona de trabajo.</li></ol>
+   <p class="small"><b>Mientras falte una regla, la instalación está en tensión.</b> Desde la devolución (F-06 A), también.</p></div>
+  <div class="card"><h3>Comunicaciones</h3><ul><li>Teléfono o radio grabados. Identificarse: nombre, empresa, nº de descargo, lugar.</li><li>Orden completa; quien la recibe la repite; «correcto»; se ejecuta; «ejecutado» con hora.</li><li>Prohibido maniobrar por hora pactada, señales, terceros o mensaje no confirmado.</li></ul></div>
+  <div class="card"><h3>Distancias (Tabla 1, RD 614/2001, cm)</h3><table class="t"><tr><th>Un kV</th><th>DPEL-1</th><th>DPEL-2</th><th>DPROX-1</th><th>DPROX-2</th></tr>
+   ${[[15,66,57,116,300],[20,72,60,122,300],[30,82,66,132,300],[45,98,73,148,300],[66,120,85,170,300]].map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table>
+   <p class="small muted">DPEL-1 con riesgo de sobretensión por rayo; DPROX-1 si la zona de trabajo puede delimitarse con precisión.</p></div>
+  <div class="card"><h3>Ante una anomalía</h3><p>Parar, retirar al personal, considerar en tensión y avisar al AD y al RI. Registrarlo como incidencia. Emergencias: <a href="tel:112">112</a>.</p></div></div>`;
+}
+
+/* ---------- integración con el APK Android ---------- */
+function doPrint(){
+  if (window.AndroidBridge) AndroidBridge.print(document.title + ' · Informe');
+  else window.print();
+}
+window.onAndroidImport = () => {
+  if (!window.AndroidBridge) return;
+  let arr = [];
+  try { arr = JSON.parse(AndroidBridge.takePendingImports()); } catch(e){ return; }
+  if (arr.length) importFiles(arr.map((t,i) => ({name:'Fichero recibido ' + (i+1), text: async () => t})));
+};
+function viewImg(src){
+  const o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;display:flex;align-items:center;justify-content:center';
+  o.innerHTML = `<img src="${src}" alt="Foto ampliada" style="max-width:100%;max-height:100%;object-fit:contain">`;
+  o.onclick = () => o.remove(); document.body.appendChild(o);
+}
+
+/* ---------- arranque ---------- */
+$('#importFile').addEventListener('change', e => { const f = [...e.target.files]; e.target.value=''; if (f.length) importFiles(f); });
+(async () => {
+  await DB.open();
+  if (!DB.db) toast('Aviso: este navegador no permite guardar datos de forma permanente.', 6000);
+  try { (await DB.all()).forEach(x => EXPS.set(x.id, x)); } catch(e){}
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+  render();
+  if (!window.AndroidBridge && 'serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+  if (window.AndroidBridge) window.onAndroidImport();
+  if ('launchQueue' in window) window.launchQueue.setConsumer(async p => { if (p.files && p.files.length) importFiles(await Promise.all(p.files.map(h=>h.getFile()))); });
+})();
+</script>
+</body>
+</html>
